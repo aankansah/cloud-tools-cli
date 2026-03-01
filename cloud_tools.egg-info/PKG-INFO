@@ -1,0 +1,174 @@
+Metadata-Version: 2.4
+Name: cloud-tools
+Version: 0.1.0
+Summary: Modular AWS cloud operations CLI toolkit
+Author: Augustine Nkansah
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+License-File: LICENSE.txt
+Requires-Dist: boto3
+Requires-Dist: typer[all]
+Dynamic: license-file
+
+# Cloud Tools CLI
+
+**Cloud Tools CLI** is a modular command-line toolkit for AWS cloud operations.
+It provides multiple tools to help DevOps engineers, cloud auditors, and developers manage AWS resources, detect security risks, enforce tagging policies, and visualize infrastructure.
+
+---
+
+## Features
+
+- **Audit** – Scan AWS resources (EC2, Security Groups, S3 Buckets) for public exposure and security risks
+  - Detects Security Groups with inbound rules open to `0.0.0.0/0`
+  - Identifies EC2 instances with public IP addresses
+  - Finds S3 buckets with public ACLs
+  - Displays findings in a formatted table with region, resource details, and tags
+- **Tag Checker** – Validate resource tags across regions (planned)
+- **Snapshot Cleaner** – Clean unused EBS snapshots (planned)
+- **Port Visualizer** – Visualize open ports in your VPC (planned)
+
+**All tools support scanning a single region or all AWS regions.**
+
+---
+
+## Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/yourusername/cloud-tools-cli.git
+cd cloud-tools-cli
+```
+
+2. Create and activate a Python virtual environment:
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+3. Install the package in editable mode:
+
+```bash
+pip install -e .
+```
+
+4. Configure your AWS CLI profile. You can use any profile name; for example:
+
+```bash
+aws configure --profile <your-profile-name>
+export AWS_PROFILE=<your-profile-name>
+```
+
+Replace `<your-profile-name>` with the profile you want to use when running the tools.
+
+---
+
+## Usage
+
+### Audit Tool
+
+Scan all regions:
+
+```bash
+cloud-tools audit scan
+```
+
+Scan a specific region:
+
+```bash
+cloud-tools audit scan --region us-east-1
+# or
+cloud-tools audit scan -r us-east-1
+```
+
+**Example Output:**
+
+```
+Scanning specified region: us-east-1
+
+Scanning region: us-east-1
+                                                   🚨 Exposure Report                                               
+┏━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Region    ┃ Resource Type  ┃ Resource Name   ┃ Resource ID          ┃ Tags               ┃ Issue                     ┃
+┡━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ us-east-1 │ Security Group │ launch-wizard-1 │ sg-0984e10ba44ad0cac │ -                  │ Open port(s) to 0.0.0.0/0 │
+│ us-east-1 │ Security Group │ launch-wizard-1 │ sg-0984e10ba44ad0cac │ -                  │ Open port(s) to 0.0.0.0/0 │
+│ us-east-1 │ EC2 Instance   │ Sample Server   │ i-00fd50e6204d72f72  │ Name=Sample Server │ Public IP: 54.91.107.51   │
+└───────────┴────────────────┴─────────────────┴──────────────────────┴────────────────────┴───────────────────────────┘
+
+Total Findings: 3
+```
+
+The audit tool scans for:
+
+* **Security Groups** with inbound rules open to `0.0.0.0/0`
+* **EC2 Instances** with public IP addresses
+* **S3 Buckets** with public ACLs
+
+### Future Tools (Coming Soon)
+
+* **Tag Checker:** Validate resource tags across specified regions
+* **Snapshot Cleaner:** Clean unused EBS snapshots
+* **Port Visualizer:** Visualize open ports in your VPC
+
+---
+
+## Project Structure
+
+```text
+cloud-tools/
+├── cloud_tools/
+│   ├── __init__.py
+│   ├── cli.py
+│   ├── audit.py
+│   ├── tag_checker.py
+│   ├── snapshot_cleaner.py
+│   └── port_visualizer.py
+├── tests/
+├── pyproject.toml
+├── README.md
+└── LICENSE.txt
+```
+
+---
+
+## Contributing
+
+Contributions are welcome!
+
+* Add new tools by creating a new module in `cloud_tools/` with a `Typer` app.
+* Register the module in `cli.py` with:
+
+```python
+app.add_typer(new_tool.app, name="new-tool")
+```
+
+* Write unit tests in `tests/`.
+* Follow code formatting standards (e.g., `black`, `flake8`).
+
+---
+
+## License
+
+MIT License
+
+---
+
+## Why This Tool Exists
+
+Managing cloud infrastructure manually is error-prone and risky. **Cloud Tools CLI** was built to:
+
+* Provide DevOps engineers with actionable visibility of AWS resources
+* Help developers enforce security best practices
+* Serve as a modular toolkit that grows as your cloud environment evolves
+
+```
+
+---
+
+If you want, I can **also generate a complete downloadable `README.md` + project skeleton** with **all modules and placeholders set up**, ready to `pip install -e .` and run immediately.  
+
+Do you want me to do that next?
+```
