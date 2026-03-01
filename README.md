@@ -8,7 +8,11 @@ It provides multiple tools to help DevOps engineers, cloud auditors, and develop
 
 ## Features
 
-- **Audit** – Scan AWS resources (EC2, S3, Security Groups) for public exposure.
+- **Audit** – Scan AWS resources (EC2, Security Groups, S3 Buckets) for public exposure and security risks
+  - Detects Security Groups with inbound rules open to `0.0.0.0/0`
+  - Identifies EC2 instances with public IP addresses
+  - Finds S3 buckets with public ACLs
+  - Displays findings in a formatted table with region, resource details, and tags
 - **Tag Checker** – Validate resource tags across regions (planned).
 - **Snapshot Cleaner** – Clean unused EBS snapshots (planned).
 - **Port Visualizer** – Visualize open ports in your VPC (planned).
@@ -51,36 +55,45 @@ Replace `<your-profile-name>` with the profile you will use when running the too
 Scan all regions:
 
 ```bash
-cloud-tools audit scan
+./main.py
 ```
 
 Scan a specific region:
 
 ```bash
-cloud-tools audit scan --region us-east-1
+./main.py --region us-east-1
 # or
-cloud-tools audit scan -r us-east-1
+./main.py -r us-east-1
 ```
 
-### Future Tools
+**Example Output:**
 
-- **Tag Checker:** 
+```
+Scanning specified region: us-east-1
 
-```bash
-cloud-tools tag-checker --region us-east-1
+Scanning region: us-east-1
+                                                   🚨 Exposure Report                                                   
+┏━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Region    ┃ Resource Type  ┃ Resource Name   ┃ Resource ID          ┃ Tags               ┃ Issue                     ┃
+┡━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ us-east-1 │ Security Group │ launch-wizard-1 │ sg-0984e10ba44ad0cac │ -                  │ Open port(s) to 0.0.0.0/0 │
+│ us-east-1 │ Security Group │ launch-wizard-1 │ sg-0984e10ba44ad0cac │ -                  │ Open port(s) to 0.0.0.0/0 │
+│ us-east-1 │ EC2 Instance   │ Sample Server   │ i-00fd50e6204d72f72  │ Name=Sample Server │ Public IP: 54.91.107.51   │
+└───────────┴────────────────┴─────────────────┴──────────────────────┴────────────────────┴───────────────────────────┘
+
+Total Findings: 3
 ```
 
-- **Snapshot Cleaner:** 
+The tool scans for:
+- **Security Groups** with inbound rules open to `0.0.0.0/0`
+- **EC2 Instances** with public IP addresses
+- **S3 Buckets** with public ACLs
 
-```bash
-cloud-tools snapshot-cleaner --region us-east-1
-```
+### Future Tools (Coming Soon)
 
-- **Port Visualizer:** 
-
-```bash
-cloud-tools port-visualizer --region us-east-1
-```
+- **Tag Checker:** Validate resource tags across specified regions
+- **Snapshot Cleaner:** Clean unused EBS snapshots
+- **Port Visualizer:** Visualize open ports in your VPC
 
 ---
 
