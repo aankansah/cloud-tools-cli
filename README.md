@@ -46,6 +46,14 @@ aws configure --profile <your-profile-name>
 
 Replace `<your-profile-name>` with the profile you will use when running the tools.
 
+4. Make the `main.py` file executable
+
+```base
+chmod +x main.py
+```
+
+Confirm the file is executabe with `ls -lh main.py `
+
 ---
 
 ## Usage
